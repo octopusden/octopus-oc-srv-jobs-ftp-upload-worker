@@ -1,0 +1,7 @@
+Dockerfile
+docker-compose*.yml
+*/__pycache__/*
+*/share/*
+*/.git/*
+.gitignore
+.env

@@ -1,0 +1,44 @@
+version: "3.7"
+services:
+  delivery_upload_worker:
+    logging:
+      driver: "syslog"
+      options:
+        tag: "container_dlupload_worker_{{.ID}}"
+    restart: always
+    image: ${DOCKER_REGISTRY_HOST}/octopusden/octopus-oc-srv-jobs-ftp-upload-worker:${TAG:-latest}
+    environment:
+      - PSQL_URL=${PSQL_URL}
+      - PSQL_USER=${PSQL_USER}
+      - PSQL_PASSWORD=${PSQL_PASSWORD}
+      - MVN_URL=${MVN_URL}
+      - MVN_USER=${MVN_USER}
+      - MVN_PASSWORD=${MVN_PASSWORD}
+      - MVN_EXT_URL=${MVN_EXT_URL}
+      - MVN_EXT_USER=${MVN_EXT_USER}
+      - MVN_EXT_PASSWORD=${MVN_EXT_PASSWORD}
+      - MVN_INT_URL=${MVN_INT_URL}
+      - MVN_INT_USER=${MVN_INT_USER}
+      - MVN_INT_PASSWORD=${MVN_INT_PASSWORD}
+      - AMQP_URL=${AMQP_URL}
+      - AMQP_USER=${AMQP_USER}
+      - AMQP_PASSWORD=${AMQP_PASSWORD}
+      - FTP_URL=${FTP_URL}
+      - FTP_USER=${FTP_USER}
+      - FTP_PASSWORD=${FTP_PASSWORD}
+      - PGP_CHECK=${PGP_CHECK}
+      - PGP_PRIVATE_KEY_PASSWORD=${PGP_PRIVATE_KEY_PASSWORD}
+      - PGP_PRIVATE_KEY_PATH=${PGP_PRIVATE_KEY_PATH:-/local/keys/private_key.asc}
+      - DELIVERY_DESTINATIONS_PATH=${DELIVERY_DESTINATIONS_PATH:-/local/settings/delivery_destinations.yaml}
+      - SVN_CLIENTS_URL=${SVN_CLIENTS_URL}
+      - SVN_CLIENTS_USER=${SVN_CLIENTS_USER}
+      - SVN_CLIENTS_PASSWORD=${SVN_CLIENTS_PASSWORD}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_URL=${SMTP_URL}
+      - MAIL_DOMAIN=${MAIL_DOMAIN}
+      - MAIL_FROM=${MAIL_FROM}
+      - WORKER_QUEUE=${WORKER_QUEUE}
+    volumes:
+      - /local/keys/private_key.asc:${PGP_PRIVATE_KEY_PATH:-/local/keys/private_key.asc}:ro
+      - /local/settings/delivery_destinations.yaml:${DELIVERY_DESTINATIONS_PATH:-/local/settings/delivery_destinations.yaml}:ro

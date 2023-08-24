@@ -1,0 +1,6 @@
+{
+    "": {
+        "template_type": "html",
+        "template": "${text}"
+    }
+}
