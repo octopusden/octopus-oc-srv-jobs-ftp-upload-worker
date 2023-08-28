@@ -226,8 +226,8 @@ class UploadWorkerApplication(UploadWorkerServer):
         parser.add_argument("--mail-from", dest="mail_from", 
                             help="Mail user to be set as the notification sender in FROM section",
                             default=os.getenv("MAIL_FROM") or os.getenv("SMTP_USER") or "support")
-        parser.add_argument("--mail-config-dir", dest="mail_config_dir", help="Mailer configuration directory",
-                            default=os.path.abspath(os.getenv("MAIL_CONFIG_DIR") or \
+        parser.add_argument("--mail-config-file", dest="mail_config_file", help="Mailer configuration file",
+                            default=os.path.abspath(os.getenv("MAIL_CONFIG_FILE") or \
                                 pkg_resources.resource_filename(
                                     "oc_ftp_upload_worker", os.path.join("resources", "mailer", "config.json"))))
 
