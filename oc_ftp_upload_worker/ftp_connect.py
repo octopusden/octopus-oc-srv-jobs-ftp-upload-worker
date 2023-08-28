@@ -53,7 +53,7 @@ def perform_upload(clients, **kwargs):
         if '@' not in mail_from:
             mail_from = '@'.join([mail_from, kwargs['mail_domain']])
 
-        mailer = Mailer(smtp_client, mail_from, config_path=kwargs['mail_config_dir'])
+        mailer = Mailer(smtp_client, mail_from, config_path=kwargs['mail_config_file'])
 
         notify_deliveries_recipients(mailer, clients, upload_result.sent_deliveries, **kwargs)
         smtp_client.quit()
@@ -162,8 +162,8 @@ if __name__ == "__main__":
     parser.add_argument("--mail-from", dest="mail_from", 
                         help="Mail user to be set as the notification sender in FROM section",
                         default=os.getenv("MAIL_FROM") or os.getenv("SMTP_USER") or "support")
-    parser.add_argument("--mail-config-dir", dest="mail_config_dir", help="Mailer configuration directory",
-                        default=os.path.abspath(os.getenv("MAIL_CONFIG_DIR") or 
+    parser.add_argument("--mail-config-file", dest="mail_config_file", help="Mailer configuration file",
+                        default=os.path.abspath(os.getenv("MAIL_CONFIG_FILE") or 
                             pkg_resources.resource_filename("oc_ftp_upload_worker", 
                                 os.path.join("resources", "mailer", "config.json"))))
 
@@ -210,7 +210,6 @@ if __name__ == "__main__":
             logging.debug(f"Overriding [{_k}] <== [{_vv}]")
             setattr(args, _k, getattr(args, _vv))
             break
-
     
     #Log args:
     for _k, _v in args.__dict__.items():

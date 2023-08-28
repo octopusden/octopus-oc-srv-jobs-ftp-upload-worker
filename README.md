@@ -20,7 +20,7 @@ This worker listens to AMQP-based queue and does a delivery synchronization with
 - *SMTP\_USER*, *SMTP\_PASSWORD*, *SMTP\_URL* - *SMTP* server credentials - for senging e-mails about deliveries.
 - *MAIL\_DOMAIN* - mail domain for sending e-mails from. Will be used as `From: noreply@${MAIL_DOMAIN}`
 - *MAIL\_FROM* - address (may be with skipped domain) to send e-mail notifications from. **Should be specified as USER_ID in private key**
-- *MAIL\_CONFIG\_DIR* - path to mailer configuration directory
+- *MAIL\_CONFIG\_FILE* - path to mailer configuration file
 - *PGP\_CHECK* - Enable (`True`) or Disable (`False`) PGP private key check, default: `True`
 - *PGP\_PRIVATE\_KEY\_PASSWORD* - credentials for *PGP/GPG* private key. Used for encryption or signing.
 - *PGP\_PRIVATE\_KEY\_FILE* - path to *PGP/GPG* private key *on local filesystem*. **Should contain both private and public part.**
