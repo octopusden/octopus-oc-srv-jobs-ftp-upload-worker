@@ -103,6 +103,12 @@ def notify_client(mailer, client, deliveries, **kwargs):
                 _dict_subst = os.environ.copy()
                 _dict_subst.update(kwargs)
                 _dict_subst.update({k.upper(): v for k, v in kwargs.items()})
+
+                # exclude credentials
+                for _d in ["_user", "_password", "_token"]:
+                    for _k in list(filter(lambda _x: _x.lower().endswith(_d), _dict_subst.keys())):
+                        del(_dict_subst[_k])
+
                 _dict_subst['CLIENT_REPO'] = _client_repo
                 _dict_subst['FULL_GAV'] = gav_to_path(delivery.gav)
                 _dict_subst.update({k.upper(): v for k, v in parse_gav(delivery.gav).items()})
