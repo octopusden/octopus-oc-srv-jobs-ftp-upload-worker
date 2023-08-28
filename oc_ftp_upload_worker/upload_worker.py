@@ -146,7 +146,7 @@ class UploadWorkerApplication(UploadWorkerServer):
 
         client = self.get_client_info(client)
 
-        from ftp_connect import perform_upload
+        from .ftp_connect import perform_upload
         perform_upload(client, **self.args.__dict__)
 
     def custom_args(self, parser):
