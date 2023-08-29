@@ -24,5 +24,6 @@ This worker listens to AMQP-based queue and does a delivery synchronization with
 - *PGP\_CHECK* - Enable (`True`) or Disable (`False`) PGP private key check, default: `True`
 - *PGP\_PRIVATE\_KEY\_PASSWORD* - credentials for *PGP/GPG* private key. Used for encryption or signing.
 - *PGP\_PRIVATE\_KEY\_FILE* - path to *PGP/GPG* private key *on local filesystem*. **Should contain both private and public part.**
+- *PGP\_MAIL\_FROM* - address (may be with skipped domain) to search encryption key (i.e. used as *KEY\_ID* in *PGP\_PRIVATE\_KEY\_FILE*)
 - *DELIVERY\_DESTINATIONS\_FILE* - path for *delivery\_destinations.yml* settings file. See format below.
 
