@@ -308,7 +308,7 @@ class KeyValidation(object):
     """
     Validates the private key's passphrase
     """
-    def __init__(self, key_path, passphrase, mail_from, mail_domain):
+    def __init__(self, key_path, passphrase, pgp_mail_from, mail_domain):
         """"
         Reads private key used to sign delivery
         :param key_path: private key path on local filesystem
@@ -324,7 +324,7 @@ class KeyValidation(object):
             raise EnvironmentSetupError(f"Private key not found: [{key_path}]")
 
         private_key = read_key(fs.osfs.OSFS(os.path.abspath(os.path.sep)), key_path)
-        _validate_private_keys([private_key], passphrase, mail_from, mail_domain)
+        _validate_private_keys([private_key], passphrase, pgp_mail_from, mail_domain)
 
 
 ConnectionsContext = namedtuple("ConnectionsContext",
@@ -361,7 +361,7 @@ def _validate_keys(keys):
         _get_initialized_gpg(temp_fs, keys)
 
 
-def _validate_private_keys(keys, passphrase, mail_from, mail_domain):
+def _validate_private_keys(keys, passphrase, pgp_mail_from, mail_domain):
     """
     Checks that the passphrase is correct
     """
@@ -369,10 +369,10 @@ def _validate_private_keys(keys, passphrase, mail_from, mail_domain):
         gpg = _get_initialized_gpg(temp_fs, keys, passphrase=passphrase)
         message = "Encryption test"
 
-        if '@' not in mail_from:
-            mail_from = '@'.join([mail_from, mail_domain])
+        if '@' not in pgp_mail_from:
+            pgp_mail_from = '@'.join([pgp_mail_from, mail_domain])
 
-        encrypted = gpg.encrypt(message, mail_from, always_trust=True)
+        encrypted = gpg.encrypt(message, pgp_mail_from, always_trust=True)
         encrypted_string = str(encrypted)
         decrypted = gpg.decrypt(encrypted_string, passphrase=passphrase)
         if not decrypted.ok:

@@ -31,7 +31,9 @@ class UploadWorkerApplication(UploadWorkerServer):
                 "mvn_int_url": "mvn_url",
                 "mvn_int_user": "mvn_user",
                 "mvn_int_password": "mvn_password",
-                "mvn_link_url": ["mvn_ext_url", "mvn_url"]}
+                "mvn_link_url": ["mvn_ext_url", "mvn_url"],
+                "mail_from": ["smtp_user"],
+                "pgp_mail_from": ["mail_from", "smtp_user"]}
 
         for _k, _v in __override.items():
 
@@ -79,7 +81,7 @@ class UploadWorkerApplication(UploadWorkerServer):
             logging.info("Validating private key's passphrase")
             from .ClientDeliverySender import KeyValidation
             KeyValidation(args.pgp_private_key_file, args.pgp_private_key_password,
-                    args.mail_from, args.mail_domain)
+                    args.pgp_mail_from, args.mail_domain)
 
         if not self.setup_orm:
             return
@@ -225,7 +227,7 @@ class UploadWorkerApplication(UploadWorkerServer):
                             default=os.getenv("MAIL_DOMAIN") or "example.com")
         parser.add_argument("--mail-from", dest="mail_from", 
                             help="Mail user to be set as the notification sender in FROM section",
-                            default=os.getenv("MAIL_FROM") or os.getenv("SMTP_USER") or "support")
+                            default=os.getenv("MAIL_FROM") or os.getenv("SMTP_USER"))
         parser.add_argument("--mail-config-file", dest="mail_config_file", help="Mailer configuration file",
                             default=os.path.abspath(os.getenv("MAIL_CONFIG_FILE") or \
                                 pkg_resources.resource_filename(
@@ -238,6 +240,9 @@ class UploadWorkerApplication(UploadWorkerServer):
                             default=os.path.abspath(os.getenv("PGP_PRIVATE_KEY_FILE") or os.path.join(os.getcwd(), "private_key.asc")))
         parser.add_argument("--pgp-private-key-password", dest="pgp_private_key_password", help="Password for PGP private key",
                             default=os.getenv("PGP_PRIVATE_KEY_PASSWORD"))
+        parser.add_argument("--pgp-mail-from", dest="pgp_mail_from",
+                            help="Mail user to be set as the notification sender in FROM section",
+                            default=os.getenv('PGP_MAIL_FROM') or os.getenv("MAIL_FROM") or os.getenv("SMTP_USER"))
 
         return parser
 
