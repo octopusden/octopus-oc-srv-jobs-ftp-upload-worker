@@ -86,12 +86,29 @@ def process_clients_independently(deliveries, clients, context, repo_svn_fs, **k
                 except Exception as exc:
                     logging.error(f'Failed to upload to MVN: [{str(exc)}]')
 
-            if should_encrypt:
-                sender = EncryptingSender(client, context, repo_svn_fs=repo_svn_fs, **kwargs)
-            else:
-                sender = SigningSender(client, context, **kwargs)
+            _ftp_enabled = True
+            _ftp_dest = None
 
-            client_result = process_client_deliveries_independently(client_deliveries, sender)
+            for _ftp_d in list(map(lambda x: x.get("ftp"), dd.client_delivery_dest(client))):
+                # provide target folder separately if may be discovered from DeliveryDestinations
+                if not _ftp_d:
+                    continue
+
+                if not _ftp_d.get("enabled", True):
+                    _ftp_enabled = False
+                    
+                _ftp_dest = _ftp_d
+                break
+
+            if _ftp_enabled:
+                if should_encrypt:
+                    sender = EncryptingSender(client, context, repo_svn_fs=repo_svn_fs, dest=_ftp_dest **kwargs)
+                else:
+                    sender = SigningSender(client, context, dest=_ftp_dest, **kwargs,)
+
+                client_result = process_client_deliveries_independently(client_deliveries, sender)
+            else:
+                client_result = art_client_result
 
             logging.info(f"Sent to [{client.code}]: {len(client_result.sent_deliveries)}")
             upload_results.append(client_result)
