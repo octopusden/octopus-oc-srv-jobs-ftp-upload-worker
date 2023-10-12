@@ -102,7 +102,7 @@ def process_clients_independently(deliveries, clients, context, repo_svn_fs, **k
 
             if _ftp_enabled:
                 if should_encrypt:
-                    sender = EncryptingSender(client, context, repo_svn_fs=repo_svn_fs, dest=_ftp_dest **kwargs)
+                    sender = EncryptingSender(client, context, repo_svn_fs=repo_svn_fs, dest=_ftp_dest, **kwargs)
                 else:
                     sender = SigningSender(client, context, dest=_ftp_dest, **kwargs,)
 
