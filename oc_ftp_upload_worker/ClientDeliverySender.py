@@ -205,7 +205,7 @@ class EncryptingSender(ClientDeliverySender):
         """
         Places encrypted delivery to client/TO_BNK FTP folder
         """
-        return super()._get_destination_dir() or .posixpath.join(self.client.code, "TO_BNK")
+        return super()._get_destination_dir() or posixpath.join(self.client.code, "TO_BNK")
 
 
 class SigningSender(ClientDeliverySender):
