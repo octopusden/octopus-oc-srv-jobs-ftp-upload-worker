@@ -42,6 +42,7 @@ class ClientDeliverySender():
         """
         self._validate_outgoing_delivery(delivery)
         target_dir = self._get_destination_dir()
+        logging.info(f"Target directory for [{delivery.gav}]: [{target_dir}]")
 
         with TempFS() as temp_fs:
             clean_file_name = self._get_clean_delivery_content(delivery, temp_fs)

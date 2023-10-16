@@ -100,6 +100,8 @@ def process_clients_independently(deliveries, clients, context, repo_svn_fs, **k
                 _ftp_dest = _ftp_d
                 break
 
+            logging.info(f"FTP enabled for [{client.code}]: [{_ftp_enabled}]")
+
             if _ftp_enabled:
                 if should_encrypt:
                     sender = EncryptingSender(client, context, repo_svn_fs=repo_svn_fs, dest=_ftp_dest, **kwargs)
