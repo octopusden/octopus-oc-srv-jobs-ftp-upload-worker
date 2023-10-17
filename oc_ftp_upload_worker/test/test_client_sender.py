@@ -217,6 +217,15 @@ class EncryptingSenderTestSuite(SenderTestSuite):
         with self.assertRaises(ClientSetupError):
             sender.send_delivery(delivery)
 
+    def test_get_destination_dir__default(self):
+        self.get_sender_params()
+        sender = EncryptingSender(**self._kwargs)
+        self.assertEqual(sender._get_destination_dir(), posixpath.join("SOMTEST", "TO_BNK"))
+
+    def test_get_destination_dir__override(self):
+        self.get_sender_params()
+        sender = EncryptingSender(**self._kwargs, dest={"enabled": True, "directory": posixpath.join("OTHERCLIENT", "OTHERDEST")})
+        self.assertEqual(sender._get_destination_dir(), posixpath.join("OTHERCLIENT", "OTHERDEST"))
 
 class SigningSenderTestSuite(SenderTestSuite):
 
@@ -295,3 +304,12 @@ class SigningSenderTestSuite(SenderTestSuite):
         delivery.refresh_from_db()
         self.assertFalse(delivery.flag_uploaded)
 
+    def test_get_destination_dir__default(self):
+        self.get_sender_params()
+        sender = SigningSender(**self._kwargs)
+        self.assertEqual(sender._get_destination_dir(), posixpath.join("PUBLIC", "CriticalPatch"))
+
+    def test_get_destination_dir__override(self):
+        self.get_sender_params()
+        sender = SigningSender(**self._kwargs, dest={"enabled": True, "directory": posixpath.join("OTHERCLIENT", "OTHERDEST")})
+        self.assertEqual(sender._get_destination_dir(), posixpath.join("OTHERCLIENT", "OTHERDEST"))

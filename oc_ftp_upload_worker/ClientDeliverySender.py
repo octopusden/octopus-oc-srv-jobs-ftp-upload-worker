@@ -42,6 +42,7 @@ class ClientDeliverySender():
         """
         self._validate_outgoing_delivery(delivery)
         target_dir = self._get_destination_dir()
+        logging.info(f"Target directory for [{delivery.gav}]: [{target_dir}]")
 
         with TempFS() as temp_fs:
             clean_file_name = self._get_clean_delivery_content(delivery, temp_fs)
@@ -62,7 +63,12 @@ class ClientDeliverySender():
         Retrieves path to place prepared delivery
         :return str: target path relative to root
         """
-        raise NotImplementedError("Subclasses must implement it")
+        _p = self.kwargs.get("dest")
+
+        if _p: 
+            _p = _p.get("directory")
+
+        return _p
 
     def _validate_outgoing_delivery(self, delivery):
         """ 
@@ -200,7 +206,7 @@ class EncryptingSender(ClientDeliverySender):
         """
         Places encrypted delivery to client/TO_BNK FTP folder
         """
-        return posixpath.join(self.client.code, "TO_BNK")
+        return super()._get_destination_dir() or posixpath.join(self.client.code, "TO_BNK")
 
 
 class SigningSender(ClientDeliverySender):
@@ -239,7 +245,7 @@ class SigningSender(ClientDeliverySender):
         """
         Signed deliveries are intended for multiple clients' usage so they are placed to common directory
         """
-        return posixpath.join("PUBLIC", "CriticalPatch")
+        return super()._get_destination_dir() or posixpath.join("PUBLIC", "CriticalPatch")
 
     def _process_delivery_content(self, delivery, clean_file_name, work_fs):
         """
