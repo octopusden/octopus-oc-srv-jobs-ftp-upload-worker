@@ -384,6 +384,8 @@ def _validate_private_keys(keys, passphrase, pgp_mail_from, mail_domain):
         if not decrypted.ok:
             logging.error(decrypted.stderr)
             raise DeliveryEncryptionError("Private key passphrase validation failed.")
+        logging.info('Validating private key can sign')
+        signed = gpg.sign(message, keyid=pgp_mail_from, passphrase=passphrase)
 
 
 def _delivery_packaged_gav(delivery, packaging):
