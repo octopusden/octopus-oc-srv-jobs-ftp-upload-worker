@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Basic clients for external systems"""
-
+import fs.errors
 import pysvn
 from oc_pyfs.SvnFS import SvnFS
 from oc_pyfs.NexusFS import NexusFS
@@ -8,6 +8,9 @@ from oc_cdtapi.NexusAPI import NexusAPI
 from fs.ftpfs import FTPFS
 import urllib.parse
 from smtplib import SMTP
+
+from oc_ftp_upload_worker.upload_errors import EnvironmentSetupError
+
 
 def get_svn_fs_client(url, user, password):
     """
@@ -56,7 +59,14 @@ def get_ftp_fs_client(url, user, password):
         raise ValueError(f"Some credentials not set for FTP: url=[{bool(url)}], user=[{bool(user)}], password=[{bool(password)}]")
 
     _url = urllib.parse.urlparse(url)
-    return FTPFS(user=user, passwd=password, host=_url.hostname, port=_url.port)
+
+    try:
+        ftp_fs = FTPFS(user=user, passwd=password, host=_url.hostname, port=_url.port)
+        ftp_fs.ftp #Checking if the ftp_fs is using correct credentials
+
+        return ftp_fs
+    except fs.errors.PermissionDenied as _pd:
+        raise EnvironmentSetupError("FTP login credentials incorrect")
 
 def get_mvn_fs_client(url, user, password, work_fs, **kwargs):
     """
