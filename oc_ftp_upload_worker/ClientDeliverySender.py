@@ -14,7 +14,8 @@ from fs.tempfs import TempFS
 from fs.errors import ResourceNotFound
 from collections import namedtuple
 from oc_cdtapi import NexusAPI
-from .upload_errors import DeliveryUploadError, ClientSetupError, EnvironmentSetupError, DeliveryExistsError, DeliveryEncryptionError
+from .upload_errors import DeliveryUploadError, ClientSetupError, EnvironmentSetupError, DeliveryExistsError, \
+    DeliveryEncryptionError, UploadProcessException
 import posixpath
 
 
@@ -114,6 +115,8 @@ class ClientDeliverySender():
                 target_fs.remove(basename)
 
             move_file(work_fs, processed_file_name, target_fs, basename)
+        except fs.errors.PermissionDenied as _pd:
+            raise UploadProcessException(f"Permission denied when uploading [{basename}] for FTP: [{target_dir}]") from _pd
         except ResourceNotFound as _e:
             raise ClientSetupError(f"Not found on FTP: [{target_dir}]") from _e
 
