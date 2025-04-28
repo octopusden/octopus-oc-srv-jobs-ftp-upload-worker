@@ -3,7 +3,7 @@ from setuptools import setup
 import os
 import glob
 
-__version = '1.13.6'
+__version = '1.13.7'
 
 def list_recursive(app, directory, extension="*"):
     dir_to_walk = os.path.join(app, directory)
