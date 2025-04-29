@@ -3,7 +3,7 @@ from setuptools import setup
 import os
 import glob
 
-__version = '1.13.7'
+__version = '1.13.8'
 
 def list_recursive(app, directory, extension="*"):
     dir_to_walk = os.path.join(app, directory)
@@ -34,6 +34,7 @@ _spec = {
             "fs",
             "pyyaml",
             "oc-cdt-queue2 >= 4.0.1",
+            "oc-logging",
             ],
         "python_requires": ">=3.6",
         "packages": ["oc_ftp_upload_worker"],

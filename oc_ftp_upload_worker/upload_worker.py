@@ -6,6 +6,7 @@ import argparse
 import logging
 from oc_orm_initializator.orm_initializator import OrmInitializator
 import pkg_resources
+from oc_logging.Logging import setup_logging
 
 class UploadWorkerApplication(UploadWorkerServer):
 
@@ -65,7 +66,7 @@ class UploadWorkerApplication(UploadWorkerServer):
         Initialization of the parameters from arguments
         :param argparse.namespace args: parsed arguments
         """
-
+        setup_logging()
         args = self.__fix_args(args)
 
         # just log the arguments
