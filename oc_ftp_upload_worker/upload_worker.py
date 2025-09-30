@@ -7,8 +7,14 @@ import logging
 from oc_orm_initializator.orm_initializator import OrmInitializator
 import pkg_resources
 from oc_logging.Logging import setup_logging
+from oc_cdtapi import PgQAPI
 
 class UploadWorkerApplication(UploadWorkerServer):
+
+    def custom_connect(self):
+        logging.debug('Reached DLBuildWorker.connect')
+        self.pgq = PgQAPI.PgQAPI()
+        logging.debug('self.pgq: [%s]' % self.pgq)
 
     def __init__(self, *args, **kvargs):
         """
@@ -16,6 +22,7 @@ class UploadWorkerApplication(UploadWorkerServer):
         :param bool setup_orm: do or not setup django ORM
         """
         self.setup_orm = kvargs.pop('setup_orm', True)
+        self.msg_source = None
         super().__init__(*args, **kvargs)
 
     def __fix_args(self, args):
@@ -158,15 +165,25 @@ class UploadWorkerApplication(UploadWorkerServer):
         :param argparse.ArgumentParser parser: parser with arguments
         :return argparse.ArgumentParse: modified parser with additional arguments
         """
+        logging.debug('Reached custom_args')
         # AMQP-related arguments are described in parent class
 
-        ### PSQL (django-database) arguments
+        parser.add_argument("--msg_source", dest="msg_source", help="The source of messages - amqp or db", default=os.getenv("MSG_SOURCE"))
+        parser.add_argument("--sleep", dest="sleep", help="Seconds between new messages queries", default="10")
+
+        ### PSQL arguments
         parser.add_argument("--psql-url", dest="psql_url", help="PSQL URL, including schema path",
                             default=os.getenv("PSQL_URL"))
         parser.add_argument("--psql-user", dest="psql_user", help="PSQL user",
                             default=os.getenv("PSQL_USER"))
         parser.add_argument("--psql-password", dest="psql_password", help="PSQL password",
                             default=os.getenv("PSQL_PASSWORD"))
+        parser.add_argument("--psql-mq-url", dest="psql_mq_url", help="PSQL messages URL",
+                            default=os.getenv("PSQL_MQ_URL"))
+        parser.add_argument("--psql-mq-user", dest="psql_mq_user", help="PSQL messages user",
+                            default=os.getenv("PSQL_MQ_USER"))
+        parser.add_argument("--psql-mq-password", dest="psql_mq_password", help="PSQL messages password",
+                            default=os.getenv("PSQL_MQ_PASSWORD"))
 
         ### MVN (maven) arguments
         parser.add_argument("--mvn-url", dest="mvn_url", help="MVN URL",
