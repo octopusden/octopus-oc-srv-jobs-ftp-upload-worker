@@ -2,6 +2,7 @@
 
 from oc_dlinterface.dlupload_worker_interface import queue_published, UploadWorkerServer
 import os
+import time
 import argparse
 import logging
 from oc_orm_initializator.orm_initializator import OrmInitializator
@@ -12,9 +13,58 @@ from oc_cdtapi import PgQAPI
 class UploadWorkerApplication(UploadWorkerServer):
 
     def custom_connect(self):
-        logging.debug('Reached DLBuildWorker.connect')
+        """
+        Alternative connect method that uses db instead of amqp
+        """
+        logging.debug('Reached UploadWorkerApplication.custom_connect')
         self.pgq = PgQAPI.PgQAPI()
         logging.debug('self.pgq: [%s]' % self.pgq)
+
+    def custom_run(self):
+        """
+        Alternative run method that uses db instead of amqp
+        """
+        logging.debug('Reached UploadWorkerApplication.custom_run')
+        msg = None
+        err_message = None
+        logging.debug('Entering main loop')
+        logging.debug('self.queue_name is [%s]' % self.queue_name)
+        while True:
+            client_code = None
+            ds = self.pgq.new_msg_from_queue(self.queue_name)
+            if not ds:
+                logging.debug('No new messages in queue.')
+                logging.debug('Sleeping [%s]' % self.sleep)
+                time.sleep(int(self.sleep))
+                continue
+            msg, msg_id = ds
+            logging.debug('new_msg_from_queue id [%s] is [%s]' % (msg_id, msg) )
+            client_code = msg[1][0]
+            logging.debug('client_code from message: [%s]' % client_code)
+            logging.debug('Calling upload_delivery')
+            try:
+                self.upload_delivery(client_code)
+            except Exception as e:
+                em = str(e)
+                self.finish_msg_prc(msg_id, 'F', em)
+                continue
+            self.finish_msg_prc(msg_id, 'P')
+
+    def finish_msg_prc(self, msg_id, status, message=None):
+        """
+        sets message status and optionally comment/error message
+        :param str msg_id: message id in mq.queue_message table
+        :param str status: one letter status. P=processed, other treated as F=failure
+        :oaram str message: optional error/comment message
+        """
+        logging.debug('Reached finish_msg_prc')
+        if status == 'P':
+            logging.debug('Status is [P]rocessed. Calling msg_proc_end')
+            self.pgq.msg_proc_end(msg_id, comment_text=message)
+        else:
+            logging.debug('Status in not [P]rocessed, calling msg_proc_fail')
+            self.pgq.msg_proc_fail(msg_id, error_message=message)
+            
 
     def __init__(self, *args, **kvargs):
         """
@@ -27,7 +77,7 @@ class UploadWorkerApplication(UploadWorkerServer):
 
     def __fix_args(self, args):
         """
-        Do override some arguments since this may not be done by 'argparse' itself\
+        Do override some arguments since this may not be done by 'argparse' itself
         :param argparse.namespace args:
         """
         logging.debug("Fixing arguments")
@@ -75,6 +125,9 @@ class UploadWorkerApplication(UploadWorkerServer):
         """
         setup_logging()
         args = self.__fix_args(args)
+        self.msg_source = args.msg_source
+        self.sleep = args.sleep
+        self.queue_name = 'cdt.dlupload.input'
 
         # just log the arguments
         for _k, _v in args.__dict__.items():
@@ -90,6 +143,12 @@ class UploadWorkerApplication(UploadWorkerServer):
             from .ClientDeliverySender import KeyValidation
             KeyValidation(args.pgp_private_key_file, args.pgp_private_key_password,
                     args.pgp_mail_from, args.mail_domain)
+
+        logging.debug('Checking message source... [%s]' % self.msg_source)
+        if self.msg_source == 'db':
+            logging.info('Message source is db, overriding connect and run methods')
+            self.connect = self.custom_connect
+            self.run = self.custom_run
 
         if not self.setup_orm:
             return
@@ -129,6 +188,7 @@ class UploadWorkerApplication(UploadWorkerServer):
     def upload_delivery(self, client):
         """
         Do upload delivery for a client called
+        :param str client: client code
         """
         self.client_availability_update(client)
         self.upload_to_ftp(client)
@@ -168,7 +228,7 @@ class UploadWorkerApplication(UploadWorkerServer):
         logging.debug('Reached custom_args')
         # AMQP-related arguments are described in parent class
 
-        parser.add_argument("--msg_source", dest="msg_source", help="The source of messages - amqp or db", default=os.getenv("MSG_SOURCE"))
+        parser.add_argument("--msg-source", dest="msg_source", help="The source of messages - amqp or db", default=os.getenv("MSG_SOURCE"))
         parser.add_argument("--sleep", dest="sleep", help="Seconds between new messages queries", default="10")
 
         ### PSQL arguments
