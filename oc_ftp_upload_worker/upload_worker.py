@@ -38,6 +38,10 @@ class UploadWorkerApplication(UploadWorkerServer):
                 continue
             msg, msg_id = ds
             logging.debug('new_msg_from_queue id [%s] is [%s]' % (msg_id, msg) )
+            if not msg or len(msg) < 2 or not msg[1] or len(msg[1]) < 1:
+                logging.error('Invalid message structure: %s', msg)
+                self.finish_msg_prc(msg_id, 'F', 'Invalid message structure')
+                continue
             client_code = msg[1][0]
             logging.debug('client_code from message: [%s]' % client_code)
             logging.debug('Calling upload_delivery')
