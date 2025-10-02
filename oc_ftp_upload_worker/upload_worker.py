@@ -239,12 +239,12 @@ class UploadWorkerApplication(UploadWorkerServer):
                             default=os.getenv("PSQL_USER"))
         parser.add_argument("--psql-password", dest="psql_password", help="PSQL password",
                             default=os.getenv("PSQL_PASSWORD"))
-        parser.add_argument("--psql-mq-url", dest="psql_mq_url", help="PSQL messages URL",
-                            default=os.getenv("PSQL_MQ_URL"))
-        parser.add_argument("--psql-mq-user", dest="psql_mq_user", help="PSQL messages user",
-                            default=os.getenv("PSQL_MQ_USER"))
-        parser.add_argument("--psql-mq-password", dest="psql_mq_password", help="PSQL messages password",
-                            default=os.getenv("PSQL_MQ_PASSWORD"))
+        #parser.add_argument("--psql-mq-url", dest="psql_mq_url", help="PSQL messages URL",
+        #                    default=os.getenv("PSQL_MQ_URL"))
+        #parser.add_argument("--psql-mq-user", dest="psql_mq_user", help="PSQL messages user",
+        #                    default=os.getenv("PSQL_MQ_USER"))
+        #parser.add_argument("--psql-mq-password", dest="psql_mq_password", help="PSQL messages password",
+        #                    default=os.getenv("PSQL_MQ_PASSWORD"))
 
         ### MVN (maven) arguments
         parser.add_argument("--mvn-url", dest="mvn_url", help="MVN URL",
