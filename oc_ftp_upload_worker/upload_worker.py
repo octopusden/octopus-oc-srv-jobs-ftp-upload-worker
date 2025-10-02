@@ -26,7 +26,6 @@ class UploadWorkerApplication(UploadWorkerServer):
         """
         logging.debug('Reached UploadWorkerApplication.custom_run')
         msg = None
-        err_message = None
         logging.debug('Entering main loop')
         logging.debug('self.queue_name is [%s]' % self.queue_name)
         while True:
@@ -55,7 +54,7 @@ class UploadWorkerApplication(UploadWorkerServer):
         sets message status and optionally comment/error message
         :param str msg_id: message id in mq.queue_message table
         :param str status: one letter status. P=processed, other treated as F=failure
-        :oaram str message: optional error/comment message
+        :param str message: optional error/comment message
         """
         logging.debug('Reached finish_msg_prc')
         if status == 'P':
@@ -149,6 +148,8 @@ class UploadWorkerApplication(UploadWorkerServer):
             logging.info('Message source is db, overriding connect and run methods')
             self.connect = self.custom_connect
             self.run = self.custom_run
+        else:
+            logging.info('Message source is not db, no method override required')
 
         if not self.setup_orm:
             return
