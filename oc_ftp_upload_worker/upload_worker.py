@@ -243,6 +243,8 @@ class UploadWorkerApplication(UploadWorkerServer):
                             default=os.getenv("PSQL_USER"))
         parser.add_argument("--psql-password", dest="psql_password", help="PSQL password",
                             default=os.getenv("PSQL_PASSWORD"))
+
+        #TODO restore arguments, call PgQAPI constructor with these parms.
         #parser.add_argument("--psql-mq-url", dest="psql_mq_url", help="PSQL messages URL",
         #                    default=os.getenv("PSQL_MQ_URL"))
         #parser.add_argument("--psql-mq-user", dest="psql_mq_user", help="PSQL messages user",
