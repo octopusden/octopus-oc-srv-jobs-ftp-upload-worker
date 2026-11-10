@@ -17,7 +17,8 @@ This worker listens to AMQP-based or db-based queue and does a delivery synchron
 - *AMQP\_URL*, *AMQP\_USER*, *AMQP\_PASSWORD* - credentials for *AMQP* server connection.
 - *WORKER\_QUEUE* - a queue to listen, default: `cdt.dlupload.input`
 - *FTP\_URL*, *FTP\_USER*, *FTP\_PASSWORD* - credentials for *FTP* server connection.
-- *SVN\_CLIENTS\_URL*, *SVN\_CLIENTS\_USER*, *SVN_CLIENTS_PASSWORD* - credentials for Subversion PGP keys storage (for recipients)
+- *SVN\_URL*, *SVN\_USER*, *SVN\_PASSWORD* - credentials for *Subversion* server connection.
+- *SVN\_CLIENTS\_REPO* - *Subversion* repository with PGP keys storage (for recipients), relative to *SVN\_URL* (e.g. `test_02`).
 - *SMTP\_USER*, *SMTP\_PASSWORD*, *SMTP\_URL* - *SMTP* server credentials - for senging e-mails about deliveries.
 - *MAIL\_DOMAIN* - mail domain for sending e-mails from. Will be used as `From: noreply@${MAIL_DOMAIN}`
 - *MAIL\_FROM* - address (may be with skipped domain) to send e-mail notifications from. **Should be specified as USER_ID in private key**

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Basic clients for external systems"""
+import os
 import fs.errors
 import pysvn
 from oc_pyfs.SvnFS import SvnFS
@@ -10,6 +11,19 @@ import urllib.parse
 from smtplib import SMTP
 
 from oc_ftp_upload_worker.upload_errors import EnvironmentSetupError
+
+
+def get_clients_repo_url():
+    """
+    Build URL of clients-related SubVersion repository
+    :return: SVN_URL with SVN_CLIENTS_REPO appended, None if any of them is not set
+    """
+    svn_url = os.getenv("SVN_URL")
+    clients_repo = os.getenv("SVN_CLIENTS_REPO")
+    if not svn_url or not clients_repo:
+        return None
+
+    return "/".join([svn_url.rstrip("/"), clients_repo.strip("/")])
 
 
 def get_svn_fs_client(url, user, password):

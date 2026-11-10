@@ -4,7 +4,7 @@
 import os
 import re
 from oc_mailer.Mailer import Mailer
-from .fs_clients import get_svn_fs_client, get_ftp_fs_client, get_mvn_fs_client, get_smtp_client
+from .fs_clients import get_svn_fs_client, get_ftp_fs_client, get_mvn_fs_client, get_smtp_client, get_clients_repo_url
 from fs.tempfs import TempFS
 from .ClientDeliverySender import EncryptingSender, SigningSender, ConnectionsContext
 from .upload_errors import DeliveryExistsError, EnvironmentSetupError, UploadProcessException, DeliveryUploadError, ClientSetupError, EnvironmentSetupError, UploadProcessException, DeliveryEncryptionError
@@ -101,12 +101,12 @@ if __name__ == "__main__":
                         default=os.getenv("FTP_PASSWORD"))
 
     ### SVN (subversion) arguments
-    parser.add_argument("--svn-clients-url", dest="svn_clients_url", help="SVN URL for clients section",
-                        default=os.getenv("SVN_CLIENTS_URL"))
+    parser.add_argument("--svn-clients-url", dest="svn_clients_url", help="SVN URL for clients section, default: SVN_URL/SVN_CLIENTS_REPO",
+                        default=get_clients_repo_url())
     parser.add_argument("--svn-clients-user", dest="svn_clients_user", help="SVN user for clients section",
-                        default=os.getenv("SVN_CLIENTS_USER"))
+                        default=os.getenv("SVN_USER"))
     parser.add_argument("--svn-clients-password", dest="svn_clients_password", help="SVN password for clients section",
-                        default=os.getenv("SVN_CLIENTS_PASSWORD"))
+                        default=os.getenv("SVN_PASSWORD"))
 
     ### PSQL (PostGres) arguments
     parser.add_argument("--psql-url", dest="psql_url", help="PSQL URL, including schema path",
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     parser.add_argument("--smtp-user", dest="smtp_user", help="SMTP user",
                         default=os.getenv("SMTP_USER"))
     parser.add_argument("--smtp-password", dest="smtp_password", help="SMTP password",
-                        default=os.getenv("FTP_PASSWORD"))
+                        default=os.getenv("SMTP_PASSWORD"))
     parser.add_argument("--mail-domain", dest="mail_domain", 
                         help="Mail domain to be added to delivery author e-mail address",
                         default=os.getenv("MAIL_DOMAIN") or "example.com")
