@@ -155,7 +155,7 @@ if __name__ == "__main__":
     parser.add_argument("--smtp-user", dest="smtp_user", help="SMTP user",
                         default=os.getenv("SMTP_USER"))
     parser.add_argument("--smtp-password", dest="smtp_password", help="SMTP password",
-                        default=os.getenv("FTP_PASSWORD"))
+                        default=os.getenv("SMTP_PASSWORD"))
     parser.add_argument("--mail-domain", dest="mail_domain", 
                         help="Mail domain to be added to delivery author e-mail address",
                         default=os.getenv("MAIL_DOMAIN") or "example.com")
